@@ -1,9 +1,28 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './user/user.module';
-import { BookmarkModule } from './bookmark/bookmark.module';
 import { AuthModule } from './auth/auth.module';
+import { PrismaService } from './prisma/prisma.service';
+import { PrismaModule } from './prisma/prisma.module';
+import { ClubsModule } from './clubs/clubs.module';
+import { PlayersModule } from './players/players.module';
+import { NewsModule } from './news/news.module';
+import { MatchesModule } from './matches/matches.module';
+import { UsersModule } from './users/users.module';
+import { TournamentsModule } from './tournaments/tournaments.module';
+import { SeasonsModule } from './seasons/seasons.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
-  imports: [AuthModule, UserModule, BookmarkModule],
+  imports: [
+    NewsModule,
+    AuthModule,
+    PrismaModule,
+    ClubsModule,
+    PlayersModule,
+    MatchesModule,
+    UsersModule,
+    TournamentsModule,
+    SeasonsModule,
+    CloudinaryModule,
+  ],
 })
 export class AppModule {}

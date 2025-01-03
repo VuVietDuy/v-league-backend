@@ -3,19 +3,92 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id Int @id @default(autoincrement()) @id
-  email String @unique
-  name String
+  id          Int @id @default(autoincrement())
+  email       String @unique
+  name        String
+  password    String
+  role        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Tournament {
+  id          Int @id @default(autoincrement())
+  vietNamName String
+  englishName String
+  description String?
+  seasons     Season[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Season {
+  id          Int @id @default(autoincrement())
+  name        String
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+  tournament  Tournament @relation(fields: [tournamentId], references: [id])
+  tournamentId Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Club {
-  id Int @id @default(autoincrement()) @id
-  name String
-  logo String
-  stadium String
+  id          Int @id @default(autoincrement())
+  name        String
+  stadium     String
+  coach       String
+  logoURL     String
+  players     Player[]
+  homeMatchs  Match[]  @relation("HomeMatches")
+  awayMatchs  Match[]  @relation("AwayMatches")
+  foundedYear Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Player {
+  id          Int @id @default(autoincrement())
+  name        String
+  imageURL    String
+  nationality String
+  dateOfBirth DateTime
+  height      Float
+  position    String
+  clubId      Int
+  club        Club @relation(fields: [clubId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Match {
+  id          Int @id @default(autoincrement())
+  homeClub    Club @relation("HomeMatches", fields: [homeClubId], references: [id])
+  homeClubId  Int
+  awayClub    Club @relation("AwayMatches", fields: [awayClubId], references: [id])
+  awayClubId  Int
+  stadium     String
+  homeScore   Int?
+  awayScore   Int?
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model News {
+  id          Int @id @default(autoincrement())
+  title       String
+  content     String
+  thumbnail   String
+  tag         String?
+  status      String?
+  publishedAt DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
