@@ -146,7 +146,7 @@ export class ClubsController {
 
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number) {
-    const data = await this.delete(id);
+    const data = await this.clubsService.delete(id);
     return {
       success: true,
       data: data,

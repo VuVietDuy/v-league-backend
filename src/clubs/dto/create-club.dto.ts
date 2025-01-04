@@ -5,7 +5,13 @@ export class CreateClubDto {
   name: string;
 
   @ApiProperty()
+  shortName?: string;
+
+  @ApiProperty()
   stadium: string;
+
+  @ApiProperty()
+  stadiumDescription: string;
 
   @ApiProperty()
   coach: string;

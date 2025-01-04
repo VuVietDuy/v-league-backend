@@ -42,7 +42,9 @@ model Season {
 model Club {
   id          Int @id @default(autoincrement())
   name        String
+  shortName   String?
   stadium     String
+  stadiumDescription String?
   coach       String
   logoURL     String
   players     Player[]

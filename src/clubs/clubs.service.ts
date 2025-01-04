@@ -27,4 +27,10 @@ export class ClubsService {
       data: updateClubDto,
     });
   }
+
+  delete(id: number) {
+    return this.prisma.club.delete({
+      where: { id },
+    });
+  }
 }
