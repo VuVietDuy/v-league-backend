@@ -16,18 +16,18 @@ export class TournamentsService {
     return this.prisma.tournament.findMany();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.prisma.tournament.findUnique({ where: { id } });
   }
 
-  update(id: number, updateTournamentDto: UpdateTournamentDto) {
+  update(id: string, updateTournamentDto: UpdateTournamentDto) {
     return this.prisma.tournament.update({
       where: { id },
       data: updateTournamentDto,
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.tournament.delete({
       where: { id },
     });

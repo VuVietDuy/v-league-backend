@@ -7,20 +7,61 @@ export class SeasonsService {
   constructor(private prisma: PrismaService) {}
 
   create(createSeasonDto: CreateSeasonDto) {
+    console.log(createSeasonDto);
     return this.prisma.season.create({ data: createSeasonDto });
   }
 
-  findAll() {
-    return this.prisma.season.findMany();
+  findAll(where?: any) {
+    return this.prisma.season.findMany({ where: where });
   }
 
-  findOne(id: number) {
+  findOne(where?: any) {
+    return this.prisma.season.findFirst({ where });
+  }
+
+  findById(id: number) {
     return this.prisma.season.findUnique({ where: { id } });
   }
 
   delete(id: number) {
     return this.prisma.season.delete({
       where: { id },
+    });
+  }
+
+  unActiveSeasons(tournamentId: string) {
+    return this.prisma.season.updateMany({
+      where: {
+        tournamentId: tournamentId,
+        isActive: true,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+  }
+
+  addSeasonClubs(seasonId: number, clubIds: number[]) {
+    const seasonClubs = clubIds.map((clubId) => ({
+      seasonId,
+      clubId,
+    }));
+
+    return this.prisma.seasonClub.createMany({
+      data: seasonClubs,
+      skipDuplicates: true,
+    });
+  }
+
+  getSeasonClubs(seasonId: number) {
+    return this.prisma.club.findMany({
+      where: {
+        seasonClub: {
+          some: {
+            seasonId: seasonId,
+          },
+        },
+      },
     });
   }
 }

@@ -16,7 +16,12 @@ export class ClubsService {
   }
 
   findOne(id: number) {
-    return this.prisma.club.findUnique({ where: { id } });
+    return this.prisma.club.findUnique({
+      where: { id },
+      include: {
+        players: true,
+      },
+    });
   }
 
   update(id: number, updateClubDto: UpdateClubDto) {

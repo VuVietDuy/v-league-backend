@@ -18,7 +18,7 @@ model User {
 }
 
 model Tournament {
-  id          Int @id @default(autoincrement())
+  id          String @id
   vietNamName String
   englishName String
   description String?
@@ -29,12 +29,16 @@ model Tournament {
 
 model Season {
   id          Int @id @default(autoincrement())
-  name        String
+  name        String?
+  logoURL     String?
   description String?
   startDate   DateTime?
   endDate     DateTime?
   tournament  Tournament @relation(fields: [tournamentId], references: [id])
-  tournamentId Int
+  isActive    Boolean?
+  tournamentId String
+  seasonClubId SeasonClub[]
+  matchs      Match[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -51,8 +55,18 @@ model Club {
   homeMatchs  Match[]  @relation("HomeMatches")
   awayMatchs  Match[]  @relation("AwayMatches")
   foundedYear Int
+  seasonClub  SeasonClub[]
+  events      Event[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model SeasonClub {
+  id          Int @id @default(autoincrement())
+  season      Season @relation(fields: [seasonId], references: [id])
+  seasonId    Int
+  club        Club @relation(fields: [clubId], references: [id])
+  clubId      Int
 }
 
 model Player {
@@ -62,23 +76,45 @@ model Player {
   nationality String
   dateOfBirth DateTime
   height      Float
+  weight      Float
   position    String
   clubId      Int
+  shirtNumber Int
   club        Club @relation(fields: [clubId], references: [id])
+  events      Event[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model Match {
   id          Int @id @default(autoincrement())
-  homeClub    Club @relation("HomeMatches", fields: [homeClubId], references: [id])
-  homeClubId  Int
-  awayClub    Club @relation("AwayMatches", fields: [awayClubId], references: [id])
-  awayClubId  Int
-  stadium     String
+  homeClub    Club? @relation("HomeMatches", fields: [homeClubId], references: [id])
+  homeClubId  Int?
+  awayClub    Club? @relation("AwayMatches", fields: [awayClubId], references: [id])
+  awayClubId  Int?
+  stadium     String?
   homeScore   Int?
   awayScore   Int?
-  status      String
+  status      String?
+  date        DateTime
+  time        String?
+  season      Season @relation(fields: [seasonId], references: [id])
+  seasonId    Int
+  events      Event[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Event {
+  id          Int @id @default(autoincrement())
+  matchId     Int
+  match       Match @relation(fields: [matchId], references: [id])
+  playerId    Int
+  player      Player @relation(fields: [playerId], references: [id])
+  clubId      Int
+  club        Club @relation(fields: [clubId], references: [id])
+  eventType   String
+  eventTime   Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -91,6 +127,17 @@ model News {
   tag         String?
   status      String?
   publishedAt DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id          Int @id @default(autoincrement())
+  title       String
+  thumbnail   String
+  linkPDF     String?
+  label       String?
+  content     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

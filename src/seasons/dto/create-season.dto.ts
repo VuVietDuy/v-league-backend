@@ -10,6 +10,8 @@ export class CreateSeasonDto {
   @IsString()
   name: string;
 
+  logoURL: string;
+
   @IsOptional()
   @IsString()
   description?: string;
@@ -22,7 +24,8 @@ export class CreateSeasonDto {
   @IsDateString()
   endDate?: string;
 
-  @IsInt()
-  @Min(1, { message: 'tournamentId phải lớn hơn 0' })
-  tournamentId: number;
+  @IsString()
+  tournamentId: string;
+
+  isActive: boolean;
 }

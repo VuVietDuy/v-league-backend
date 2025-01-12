@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -22,7 +21,7 @@ import { UpdateClubDto } from './dto/update-club.dto';
 export class ClubsController {
   constructor(
     private clubsService: ClubsService,
-    private cloudinary: CloudinaryService,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   @Get()
@@ -42,7 +41,7 @@ export class ClubsController {
 
   @Get(':clubId/players')
   async findPlayerByClubId(@Param('clubId', ParseIntPipe) clubId: number) {
-    const data = await this.clubsService.findOne(clubId);
+    const data = await this.clubsService.findOne(+clubId);
     return {
       success: true,
       data: data,
@@ -130,7 +129,7 @@ export class ClubsController {
     @Body() createClubDto: CreateClubDto,
     @UploadedFile() logo: Express.Multer.File,
   ) {
-    const fileUploaded = await this.cloudinary.uploadFile(logo);
+    const fileUploaded = await this.cloudinaryService.uploadFile(logo);
 
     createClubDto.foundedYear = parseInt(createClubDto.foundedYear as any, 10);
     createClubDto.logoURL = fileUploaded.url;
@@ -138,7 +137,7 @@ export class ClubsController {
     const data = await this.clubsService.create(createClubDto);
 
     return {
-      success: false,
+      success: true,
       data: data,
       message: 'Thêm câu lạc bộ thành công',
     };
