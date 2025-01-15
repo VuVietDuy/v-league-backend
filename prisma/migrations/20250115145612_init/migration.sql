@@ -75,7 +75,7 @@ CREATE TABLE `Player` (
     `height` DOUBLE NOT NULL,
     `weight` DOUBLE NOT NULL,
     `position` VARCHAR(191) NOT NULL,
-    `clubId` INTEGER NOT NULL,
+    `clubId` INTEGER NULL,
     `shirtNumber` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -119,7 +119,7 @@ CREATE TABLE `Event` (
 CREATE TABLE `News` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NOT NULL,
+    `content` LONGTEXT NOT NULL,
     `thumbnail` VARCHAR(191) NOT NULL,
     `tag` VARCHAR(191) NULL,
     `status` VARCHAR(191) NULL,
@@ -154,7 +154,7 @@ ALTER TABLE `SeasonClub` ADD CONSTRAINT `SeasonClub_seasonId_fkey` FOREIGN KEY (
 ALTER TABLE `SeasonClub` ADD CONSTRAINT `SeasonClub_clubId_fkey` FOREIGN KEY (`clubId`) REFERENCES `Club`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Player` ADD CONSTRAINT `Player_clubId_fkey` FOREIGN KEY (`clubId`) REFERENCES `Club`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Player` ADD CONSTRAINT `Player_clubId_fkey` FOREIGN KEY (`clubId`) REFERENCES `Club`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Match` ADD CONSTRAINT `Match_homeClubId_fkey` FOREIGN KEY (`homeClubId`) REFERENCES `Club`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

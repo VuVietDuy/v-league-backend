@@ -38,4 +38,19 @@ export class ClubsService {
       where: { id },
     });
   }
+
+  findMatchesByClubId(id: number) {
+    return this.prisma.match.findMany({
+      where: {
+        OR: [{ homeClubId: id }, { awayClubId: id }],
+        season: {
+          isActive: true,
+        },
+      },
+      include: {
+        homeClub: true,
+        awayClub: true,
+      },
+    });
+  }
 }

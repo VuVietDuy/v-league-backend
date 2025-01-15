@@ -16,6 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { CreateClubDto } from './dto/create-club.dto';
 import { UpdateClubDto } from './dto/update-club.dto';
+import { faker } from '@faker-js/faker';
 
 @Controller('api/v1/clubs')
 export class ClubsController {
@@ -46,6 +47,16 @@ export class ClubsController {
       success: true,
       data: data,
       message: `Danh sách cầu thủ câu lạc bộ ${data.name}`,
+    };
+  }
+
+  @Get(':clubId/matches')
+  async findMatchesByClubId(@Param('clubId', ParseIntPipe) clubId: number) {
+    const data = await this.clubsService.findMatchesByClubId(+clubId);
+    return {
+      success: true,
+      data: data,
+      message: `Danh sách tran dau câu lạc bộ`,
     };
   }
 

@@ -52,10 +52,10 @@ model Club {
   coach       String
   logoURL     String
   players     Player[]
-  homeMatchs  Match[]  @relation("HomeMatches")
-  awayMatchs  Match[]  @relation("AwayMatches")
+  homeMatches Match[]  @relation("HomeMatches")
+  awayMatches Match[]  @relation("AwayMatches")
   foundedYear Int
-  seasonClub  SeasonClub[]
+  seasonClubs SeasonClub[]
   events      Event[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -78,10 +78,10 @@ model Player {
   height      Float
   weight      Float
   position    String
-  clubId      Int
-  shirtNumber Int
-  club        Club @relation(fields: [clubId], references: [id])
+  clubId      Int?
+  club        Club? @relation(fields: [clubId], references: [id])
   events      Event[]
+  shirtNumber Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -122,7 +122,7 @@ model Event {
 model News {
   id          Int @id @default(autoincrement())
   title       String
-  content     String
+  content     String @db.LongText
   thumbnail   String
   tag         String?
   status      String?

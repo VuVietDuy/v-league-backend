@@ -26,4 +26,38 @@ export class TournamentsController {
   ) {
     return this.tournamentsService.update(id, updateTournamentDto);
   }
+
+  @Get(':tournamentId/matches')
+  getMatches(@Param('tournamentId') tournamentId: string) {
+    return this.tournamentsService.getMatches(tournamentId);
+  }
+
+  @Get(':tournamentId/fixtures')
+  getFixture(@Param('tournamentId') tournamentId: string) {
+    return this.tournamentsService.getMatches(tournamentId, {
+      status: 'Scheduled',
+    });
+  }
+
+  @Get(':tournamentId/results')
+  getResults(@Param('tournamentId') tournamentId: string) {
+    return this.tournamentsService.getMatches(tournamentId, {
+      status: 'Completed',
+    });
+  }
+
+  @Get(':tournamentId/tables')
+  getTables(@Param('tournamentId') tournamentId: string) {
+    return this.tournamentsService.getTables(tournamentId);
+  }
+
+  @Get(':tournamentId/clubs')
+  async getClubs(@Param('tournamentId') tournamentId: string) {
+    return this.tournamentsService.getClubs(tournamentId);
+  }
+
+  @Get(':tournamentId/dashboard')
+  async getDashboard(@Param('tournamentId') tournamentId: string) {
+    return this.tournamentsService.getDashboard(tournamentId);
+  }
 }

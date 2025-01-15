@@ -59,6 +59,7 @@ export class CreatePlayerDto {
     default: 180,
   })
   height: number;
+  weight: number;
 
   @IsString()
   @IsNotEmpty({ message: 'Vị trí là bắt buộc.' })
@@ -76,5 +77,6 @@ export class CreatePlayerDto {
     description: 'Id câu lạc bộ',
     default: 1,
   })
-  clubId: number;
+  clubId?: number;
+  shirtNumber: number;
 }

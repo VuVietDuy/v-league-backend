@@ -56,7 +56,7 @@ export class SeasonsService {
   getSeasonClubs(seasonId: number) {
     return this.prisma.club.findMany({
       where: {
-        seasonClub: {
+        seasonClubs: {
           some: {
             seasonId: seasonId,
           },
