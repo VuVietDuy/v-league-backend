@@ -1,19 +1,39 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { SeasonsService } from 'src/seasons/seasons.service';
 import { CreateEventDto } from './dto/create-event.dto';
+import { CreateLineupsDto } from './dto/create-lineups.dto';
+import { EventType } from '@prisma/client';
+import { CreateVoteDto } from './dto/create-vote.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { MatchImageDto } from './dto/match-image.dto';
 
-@Controller('api/v1/matches')
+@Controller('api/v1/')
 export class MatchesController {
   constructor(
     private matchsService: MatchesService,
+    private cloudinaryService: CloudinaryService,
     private seasonsService: SeasonsService,
   ) {}
 
-  @Get()
-  async findAll() {
-    const data = await this.matchsService.findAll();
+  // Get list match in tournament
+  @Get('tournaments/:tournamentId/matches')
+  async findAll(
+    @Param('tournamentId') tournamentId: string,
+    @Query('seasonId') seasonId: number = 0,
+  ) {
+    const data = await this.matchsService.findAll(tournamentId, seasonId);
     return {
       success: true,
       data,
@@ -21,26 +41,43 @@ export class MatchesController {
     };
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: number) {
-    const data = await this.matchsService.findOne(+id);
-    return {
-      success: true,
-      data: data,
-      message: '',
-    };
+  @Get('matches/:matchId/lineups')
+  getMatchLineups(@Param('matchId') matchId: number) {
+    return this.matchsService.getMatchLineups(+matchId);
   }
 
-  @Post()
+  @Post('matches/:matchId/lineups')
+  createMatchLineups(
+    @Param('matchId') matchId: number,
+    @Body() data: CreateLineupsDto[],
+  ) {
+    return this.matchsService.createMatchLineups(data);
+  }
+
+  @Get('matches/:id')
+  findOne(@Param('id') id: number) {
+    return this.matchsService.findOne(+id);
+  }
+
+  @Get('matches/:matchId/events')
+  getMatchEvents(
+    @Param('matchId') matchId: number,
+    @Query('clubId') clubId: number,
+    @Query('eventType') eventType: EventType,
+  ) {
+    return this.matchsService.getMatchEvents(+matchId, +clubId, eventType);
+  }
+
+  @Post('matches')
   async create(@Body() createMatchDto: CreateMatchDto) {
     const currentSeason = await this.seasonsService.findOne({
       tournamentId: createMatchDto.tournamentId,
       isActive: true,
     });
 
-    delete createMatchDto.tournamentId;
-
     createMatchDto.seasonId = currentSeason.id;
+    createMatchDto.status = 'SCHEDULED';
+    delete createMatchDto.tournamentId;
 
     const data = await this.matchsService.create(createMatchDto);
 
@@ -51,14 +88,60 @@ export class MatchesController {
     };
   }
 
-  @Post(':id/events')
+  @Post('matches/:id/events')
   async addEvent(@Body() createEventDto: CreateEventDto) {
-    console.log(createEventDto);
     const data = await this.matchsService.addEvent(createEventDto);
     return {
       success: true,
       data: data,
       message: 'Thêm sự kiện thành công',
     };
+  }
+
+  @Get('matches/:matchId/events')
+  async getListEvents(@Param('matchId') matchId: number) {
+    const data = await this.matchsService.getListEvents(matchId);
+    return {
+      success: true,
+      data: data,
+      message: 'Thêm sự kiện thành công',
+    };
+  }
+
+  @Get('matches/:matchId/players/stats')
+  getPlayersStats(@Param('matchId') matchId: number) {
+    return this.matchsService.getPlayersStats(+matchId);
+  }
+
+  @Get('matches/:matchId/votes')
+  getVotes(@Param('matchId') matchId: number) {
+    return this.matchsService.getVotes(+matchId);
+  }
+
+  @Post('matches/:matchId/votes')
+  createVote(@Body() createVoteDto: CreateVoteDto) {
+    return this.matchsService.createVote(createVoteDto);
+  }
+
+  @Post('matches/:matchId/images')
+  @UseInterceptors(FileInterceptor('image'))
+  async addMatchImage(
+    @Body() body: MatchImageDto,
+    @Param('matchId') matchId: number,
+    @UploadedFile()
+    image: Express.Multer.File,
+  ) {
+    const fileUploaded = await this.cloudinaryService.uploadFile(image);
+    body.imageURL = fileUploaded.url;
+    if (typeof body.matchId === 'string') {
+      body.matchId = parseInt(body.matchId);
+    }
+
+    return this.matchsService.addMatchImage(body);
+  }
+
+  @Get('matches/:matchId/images')
+  async getMatchImages(@Param('matchId') matchId: number) {
+    return this.matchsService.getMatchImages(+matchId);
   }
 }

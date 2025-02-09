@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClubDto } from './dto/create-club.dto';
 import { UpdateClubDto } from './dto/update-club.dto';
+import { contains } from 'class-validator';
 
 @Injectable()
 export class ClubsService {
@@ -11,8 +12,22 @@ export class ClubsService {
     return this.prisma.club.create({ data: createClubDto });
   }
 
-  findAll() {
-    return this.prisma.club.findMany();
+  findAll(key: string) {
+    let where = {};
+    if (key) {
+      where = {
+        ...where,
+        name: {
+          contains: key,
+        },
+      };
+    }
+    return this.prisma.club.findMany({
+      where: where,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   findOne(id: number) {

@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -16,7 +17,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { CreateClubDto } from './dto/create-club.dto';
 import { UpdateClubDto } from './dto/update-club.dto';
-import { faker } from '@faker-js/faker';
 
 @Controller('api/v1/clubs')
 export class ClubsController {
@@ -26,8 +26,8 @@ export class ClubsController {
   ) {}
 
   @Get()
-  findAll() {
-    return this.clubsService.findAll();
+  findAll(@Query('key') key: string) {
+    return this.clubsService.findAll(key);
   }
 
   @Get(':id')

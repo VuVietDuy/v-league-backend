@@ -1,21 +1,54 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { NewsService } from './news.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateNewsDto } from './dto/create-news.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Controller('api/v1/news')
 export class NewsController {
-  constructor(private newsService: NewsService) {}
+  constructor(
+    private newsService: NewsService,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
   @Post()
-  async create() {}
+  @UseInterceptors(FileInterceptor('thumbnailFile'))
+  async create(
+    @Body() createNewsDto: CreateNewsDto,
+    @UploadedFile() thumbnailFile: Express.Multer.File,
+  ) {
+    const thumbnail = await this.cloudinaryService.uploadFile(thumbnailFile);
+
+    createNewsDto.thumbnail = thumbnail.url;
+    createNewsDto.publishedAt = new Date(createNewsDto.publishedAt);
+    delete createNewsDto.thumbnailFile;
+
+    const data = await this.newsService.create(createNewsDto);
+
+    return data;
+  }
 
   @Get()
-  findAll() {
-    return this.newsService.findAll();
+  findAll(@Query('key') key: string) {
+    return this.newsService.findAll(key);
   }
+
   @Get('drafts')
   findDrafts() {
     return this.newsService.findDrafts();
   }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.newsService.findOne(+id);

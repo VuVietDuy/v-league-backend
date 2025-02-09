@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Position } from '@prisma/client';
 import {
   IsString,
   IsNotEmpty,
@@ -68,7 +69,7 @@ export class CreatePlayerDto {
     description: 'Vị trí thi đấu',
     default: 'Tiền vệ',
   })
-  position: string;
+  position: Position;
 
   @IsInt({ message: 'clubId phải là một số nguyên.' })
   @IsPositive({ message: 'clubId phải lớn hơn 0.' })

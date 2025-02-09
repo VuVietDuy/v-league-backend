@@ -28,11 +28,17 @@ export class AuthService {
   }
 
   async signup(signupDto: SignupDto) {
-    const user = await this.usersService.create({ ...signupDto, role: 'user' });
+    signupDto.role = 'USER';
+    signupDto.dateOfBirth = new Date('2002-03-25');
+    const user = await this.prisma.user.create({
+      data: {
+        ...signupDto,
+      },
+    });
     const payload = { userId: user.id };
     return {
       user: user,
-      access_token: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload),
     };
   }
 }

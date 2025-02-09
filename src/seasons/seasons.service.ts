@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateSeasonDto } from './dto/create-season.dto';
+import { contains } from 'class-validator';
 
 @Injectable()
 export class SeasonsService {
@@ -53,14 +54,33 @@ export class SeasonsService {
     });
   }
 
-  getSeasonClubs(seasonId: number) {
-    return this.prisma.club.findMany({
-      where: {
-        seasonClubs: {
-          some: {
-            seasonId: seasonId,
-          },
+  getSeasonClubs(seasonId: number, key: string) {
+    let where = {};
+    where = {
+      ...where,
+      seasonClubs: {
+        some: {
+          seasonId: seasonId,
         },
+      },
+    };
+    if (key) {
+      where = {
+        ...where,
+        name: {
+          contains: key,
+        },
+      };
+    }
+    return this.prisma.club.findMany({
+      where: where,
+    });
+  }
+
+  getListSeasons(tournamentId: string) {
+    return this.prisma.season.findMany({
+      where: {
+        tournamentId: tournamentId,
       },
     });
   }

@@ -1,12 +1,35 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { Gender, Role } from '@prisma/client';
+import {
+  IsString,
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsInt,
+  IsDate,
+} from 'class-validator';
 
 export class SignupDto {
-  @ApiProperty()
+  @IsString()
   name: string;
 
-  @ApiProperty()
+  @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @IsString()
   password: string;
+
+  @IsEnum(Gender)
+  gender: Gender;
+
+  @IsDate()
+  dateOfBirth: Date;
+
+  @IsEnum(Role)
+  role: Role;
+
+  @IsOptional()
+  @IsInt()
+  favouriteClub: {
+    connect: { id: number };
+  };
 }

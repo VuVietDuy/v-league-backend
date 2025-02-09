@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
+import { contains } from 'class-validator';
+import { title } from 'process';
 
 @Injectable()
 export class NewsService {
@@ -15,8 +17,22 @@ export class NewsService {
     return this.prisma.news.update({ where: { id }, data: updateNewsDto });
   }
 
-  findAll() {
-    return this.prisma.news.findMany();
+  findAll(key: string) {
+    let where = {};
+    if (key) {
+      where = {
+        ...where,
+        title: {
+          contains: key,
+        },
+      };
+    }
+    return this.prisma.news.findMany({
+      where: where,
+      orderBy: {
+        publishedAt: 'desc',
+      },
+    });
   }
 
   findDrafts() {

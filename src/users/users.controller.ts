@@ -6,13 +6,14 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
-import { GuardsConsumer } from '@nestjs/core/guards';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Role } from '@prisma/client';
 
 @Controller('api/v1/users')
 export class UsersController {
@@ -20,26 +21,23 @@ export class UsersController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    const data = await this.usersService.create(createUserDto);
+    // const data = await this.usersService.create(createUserDto);
 
     return {
       success: true,
-      data,
+      // data,
       message: 'Them nguoi dung thanh cong',
     };
   }
 
   @Get()
-  @UseGuards(AuthGuard)
-  async findAll(@Request() req: any) {
-    console.log(req);
-    const data = await this.usersService.findAll();
-
-    return {
-      success: true,
-      data,
-      message: 'Danh sach nguoi dung',
-    };
+  // @UseGuards(AuthGuard)
+  findAll(
+    @Request() req: any,
+    @Query('key') key: string,
+    @Query('role') role: Role,
+  ) {
+    return this.usersService.findAll(key, role);
   }
 
   @UseGuards(AuthGuard)

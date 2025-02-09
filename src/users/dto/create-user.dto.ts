@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -23,11 +24,33 @@ export class CreateUserDto {
   })
   password: string;
 
-  @ApiProperty({
-    description: 'Vai trò của người dùng',
-    example: 'admin',
-    enum: ['user', 'admin'],
+  @ApiPropertyOptional({
+    description: 'Giới tính của người dùng',
+    example: 'male',
+    enum: ['male', 'female', 'other'],
     type: String,
   })
-  role: string;
+  gender?: string;
+
+  @ApiPropertyOptional({
+    description: 'Ngày sinh của người dùng (YYYY-MM-DD)',
+    example: '1990-01-01',
+    type: String,
+  })
+  dateOfBirth?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID của câu lạc bộ yêu thích',
+    example: 1,
+    type: Number,
+  })
+  favouriteClubId?: number;
+
+  @ApiProperty({
+    description: 'Vai trò của người dùng',
+    example: 'USER',
+    enum: Role,
+    type: String,
+  })
+  role: Role;
 }

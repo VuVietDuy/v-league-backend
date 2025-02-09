@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,14 +15,14 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('api/v1/seasons')
+@Controller('api/v1/')
 export class SeasonsController {
   constructor(
     private seasonsService: SeasonsService,
     private cloudinaryService: CloudinaryService,
   ) {}
 
-  @Get()
+  @Get('seasons')
   async findAll() {
     const data = await this.seasonsService.findAll();
 
@@ -32,10 +33,10 @@ export class SeasonsController {
     };
   }
 
-  @Get(':id')
+  @Get('seasons/:id')
   async findOne(@Param('id', ParseIntPipe) id: number) {}
 
-  @Post()
+  @Post('seasons')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -99,7 +100,7 @@ export class SeasonsController {
     };
   }
 
-  @Post('/clubs')
+  @Post('/seasons/clubs')
   async addClubs(@Body() data: { tournamentId: string; clubs: number[] }) {
     const currentSeason = await this.seasonsService.findOne({
       tournamentId: data.tournamentId,
@@ -112,23 +113,35 @@ export class SeasonsController {
     return res;
   }
 
-  @Get(':tournamentId/clubs')
-  async getSeasonClubs(@Param('tournamentId') tournamentId: string) {
-    const currentSeason = await this.seasonsService.findOne({
-      tournamentId: tournamentId,
-      isActive: true,
-    });
+  @Get('tournaments/:tournamentId/clubs')
+  async getListClubs(
+    @Param('tournamentId') tournamentId: string,
+    @Query('seasonId') seasonId: string,
+    @Query('key') key: string,
+  ) {
+    let where =
+      seasonId === 'current' || !seasonId
+        ? {
+            tournamentId: tournamentId,
+            isActive: true,
+          }
+        : {
+            seasonId: +seasonId,
+          };
 
-    const clubs = await this.seasonsService.getSeasonClubs(currentSeason.id);
-    if (currentSeason)
-      return {
-        success: true,
-        data: clubs,
-      };
+    const currentSeason = await this.seasonsService.findOne(where);
 
-    return {
-      success: true,
-      data: [],
-    };
+    const clubs = await this.seasonsService.getSeasonClubs(
+      currentSeason.id,
+      key,
+    );
+    if (currentSeason) return clubs;
+
+    return null;
+  }
+
+  @Get('tournaments/:tournamentId/seasons')
+  getListSeasons(@Param('tournamentId') tournamentId: string) {
+    return this.seasonsService.getListSeasons(tournamentId);
   }
 }

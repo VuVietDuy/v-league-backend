@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { ApiBody } from '@nestjs/swagger';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
@@ -33,16 +41,33 @@ export class TournamentsController {
   }
 
   @Get(':tournamentId/fixtures')
-  getFixture(@Param('tournamentId') tournamentId: string) {
-    return this.tournamentsService.getMatches(tournamentId, {
-      status: 'Scheduled',
-    });
+  getFixture(
+    @Param('tournamentId') tournamentId: string,
+    @Query('clubId') clubId: number,
+    @Query('status') status: number,
+  ) {
+    const orClause = [];
+    const andClause = [];
+    console.log(status);
+    if (clubId) {
+      orClause.push({ homeClubId: +clubId }, { awayClubId: +clubId });
+    }
+    if (status) {
+      andClause.push({ status: status });
+    }
+    let where = [
+      {
+        AND: [...andClause, { OR: orClause }],
+      },
+    ];
+
+    return this.tournamentsService.getMatches(tournamentId, [...where]);
   }
 
   @Get(':tournamentId/results')
   getResults(@Param('tournamentId') tournamentId: string) {
-    return this.tournamentsService.getMatches(tournamentId, {
-      status: 'Completed',
+    return this.tournamentsService.getResults(tournamentId, {
+      status: 'COMPLETED',
     });
   }
 

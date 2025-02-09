@@ -35,6 +35,30 @@ export class TournamentsService {
   getMatches(tournamentId: string, where: any = null) {
     return this.prisma.match.findMany({
       where: {
+        AND: [
+          {
+            season: {
+              tournamentId: tournamentId,
+              isActive: true,
+            },
+          },
+          ...where,
+        ],
+      },
+      include: {
+        homeClub: true,
+        awayClub: true,
+        season: true,
+      },
+      orderBy: {
+        date: 'asc',
+      },
+    });
+  }
+
+  getResults(tournamentId: string, where: any = null) {
+    return this.prisma.match.findMany({
+      where: {
         season: {
           tournamentId: tournamentId,
           isActive: true,
@@ -47,7 +71,7 @@ export class TournamentsService {
         season: true,
       },
       orderBy: {
-        date: 'asc',
+        date: 'desc',
       },
     });
   }
@@ -121,7 +145,7 @@ export class TournamentsService {
       },
     });
 
-    const tables = [];
+    let tables = [];
 
     clubs.map((club) => {
       let won = 0;
@@ -132,7 +156,7 @@ export class TournamentsService {
       let goalsAgainst = 0;
 
       club.homeMatches.map((match) => {
-        if (match.status === 'Completed') {
+        if (match.status === 'COMPLETED') {
           played++;
           goalsFor += match.homeScore;
           goalsAgainst += match.awayScore;
@@ -147,7 +171,7 @@ export class TournamentsService {
       });
 
       club.awayMatches.map((match) => {
-        if (match.status === 'Completed') {
+        if (match.status === 'COMPLETED') {
           played++;
           goalsFor += match.awayScore;
           goalsAgainst += match.homeScore;
@@ -184,6 +208,13 @@ export class TournamentsService {
       };
       tables.push(tablesItem);
     });
+
+    tables.sort((a, b) => b.points - a.points);
+
+    tables = tables.map((item, index) => ({
+      position: index + 1,
+      ...item,
+    }));
 
     return tables;
   }

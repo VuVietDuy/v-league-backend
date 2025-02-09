@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -52,8 +53,8 @@ export class PlayersController {
   }
 
   @Get()
-  async findAll() {
-    const data = await this.playersService.findAll();
+  async findAll(@Query('key') key: string, @Query('clubId') clubId: number) {
+    const data = await this.playersService.findAll(key, +clubId);
 
     return {
       success: true,
