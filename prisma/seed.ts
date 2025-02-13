@@ -5,7 +5,13 @@ import {
   generatePlayerData,
   generatePlayerDataCAHN,
   generatePlayerDataDATH,
+  generatePlayerDataHAGL,
+  generatePlayerDataHCMFC,
+  generatePlayerDataHLHT,
   generatePlayerDataHPFC,
+  generatePlayerDataQNFC,
+  generatePlayerDataSLNA,
+  generatePlayerDataTXND,
 } from './playerData';
 import { newsData } from './newsData';
 
@@ -96,7 +102,17 @@ async function main() {
     else if (club.shortName === 'HPFC')
       players = generatePlayerDataHPFC(club.id);
     else if (club.shortName === 'SLNA')
-      players = generatePlayerDataHPFC(club.id);
+      players = generatePlayerDataSLNA(club.id);
+    else if (club.shortName === 'HLHT')
+      players = generatePlayerDataHLHT(club.id);
+    else if (club.shortName === 'HAGL')
+      players = generatePlayerDataHAGL(club.id);
+    else if (club.shortName === 'QNFC')
+      players = generatePlayerDataQNFC(club.id);
+    else if (club.shortName === 'HCMFC')
+      players = generatePlayerDataHCMFC(club.id);
+    else if (club.shortName === 'TXND')
+      players = generatePlayerDataTXND(club.id);
     else players = generatePlayerData(club.id);
 
     await prisma.player.createMany({ data: players });
@@ -115,6 +131,7 @@ async function main() {
   const clubsCount = clubs.length;
   clubs.map((homeClub) => {
     clubs.map(async (awayClub) => {
+      if (homeClub.id === awayClub.id) return;
       const now = fakerVI.date.recent();
       const matchDate = fakerVI.date.between({
         from: '2024-05-01',

@@ -167,7 +167,7 @@ export const clubData = [
   {
     name: 'Thép Xanh Nam Định',
     bio: `<p>CLB Thép Xanh Nam Định là đội bóng có lượng cổ động viên cuồng nhiệt và sân vận động luôn tạo ra không khí sôi động.</p>`,
-    shortName: 'NDFC',
+    shortName: 'TXND',
     stadium: 'SVĐ Thiên Trường',
     stadiumDescription: '(Sức chứa: 30.000 người)',
     coach: 'Vũ Hồng Việt',
