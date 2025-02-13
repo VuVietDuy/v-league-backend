@@ -44,7 +44,7 @@ export class TournamentsController {
   getFixture(
     @Param('tournamentId') tournamentId: string,
     @Query('clubId') clubId: number,
-    @Query('status') status: number,
+    @Query('status') status: string,
   ) {
     const orClause = [];
     const andClause = [];

@@ -91,6 +91,7 @@ model Club {
   id          Int @id @default(autoincrement())
   name        String
   shortName   String?
+  bio         String? @db.LongText
   coach       String
   logoURL     String
   players     Player[]
@@ -186,6 +187,7 @@ model Event {
   club        Club? @relation(fields: [clubId], references: [id])
   eventType   EventType
   eventTime   Int
+  comment     String?
   assistId    Int?
   assist      Player? @relation("Assist",fields: [assistId], references: [id])
   createdAt   DateTime @default(now())

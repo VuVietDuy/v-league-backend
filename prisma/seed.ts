@@ -1,7 +1,32 @@
 import { fakerVI } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
+import { clubData } from './clubData';
+import {
+  generatePlayerData,
+  generatePlayerDataCAHN,
+  generatePlayerDataDATH,
+  generatePlayerDataHPFC,
+} from './playerData';
+import { newsData } from './newsData';
 
 const prisma = new PrismaClient();
+
+function generateComment(eventType: string): string {
+  const comments: Record<string, string> = {
+    GOAL: 'Tuyệt vời! Một bàn thắng đẳng cấp! ⚽',
+    YELLOW_CARD: 'Trọng tài rút thẻ vàng cảnh cáo! 🟨',
+    RED_CARD: 'Thẻ đỏ! Cầu thủ phải rời sân ngay lập tức! 🟥',
+    SUBSTITUTION: 'Có sự thay đổi người trên sân! 🔄',
+    SHOTS: 'Một cú sút! Liệu có thành bàn? 🎯',
+    SHOTS_ON_TARGET: 'Cú sút nguy hiểm nhưng thủ môn đã cản phá! 🎯✅',
+    BIG_CHANCES_CREATED: 'Cơ hội ngon ăn! Nhưng liệu có tận dụng được? 🎁',
+    KEY_PASSES: 'Một đường chuyền mở ra cơ hội tấn công! 🔑',
+    SUCCESSFUL_DRIBBLES: 'Pha đi bóng đầy kỹ thuật qua hậu vệ! 🏃💨',
+    SAVE: 'Thủ môn phản xạ xuất thần để cứu thua! 🧤',
+  };
+
+  return comments[eventType] || 'Sự kiện chưa được xác định!';
+}
 
 async function main() {
   const admin = await prisma.user.upsert({
@@ -17,7 +42,7 @@ async function main() {
     },
   });
 
-  const tournaments = await prisma.tournament.createMany({
+  await prisma.tournament.createMany({
     data: [
       {
         id: 'vleague-1',
@@ -31,21 +56,16 @@ async function main() {
         englishName: 'GOLD STAR V.LEAGUE 2',
         description: 'Giải đấu cúp bóng đá của các câu lạc bộ chuyên nghiệp.',
       },
-      {
-        id: 'national-cup',
-        vietNamName: 'GIẢI BÓNG ĐÁ CÚP QUỐC GIA',
-        englishName: 'NATIONAL CUP',
-        description:
-          'Trận đấu giữa nhà vô địch V-League và nhà vô địch Cúp Quốc Gia.',
-      },
     ],
   });
 
-  const seasons = await prisma.season.createMany({
+  const tournaments = await prisma.tournament.findMany();
+
+  await prisma.season.createMany({
     data: [
       {
         name: 'GIẢI BÓNG ĐÁ VÔ ĐỊCH QUỐC GIA LPBANK 2024/25',
-        tournamentId: 'vleague-1',
+        tournamentId: tournaments[0].id,
         description: 'Viết tắt: Giải bóng đá VĐQG LPBANK 2024/25',
         startDate: '2024-05-01T10:00:00Z',
         endDate: '2025-04-01T10:00:00Z',
@@ -53,16 +73,8 @@ async function main() {
       },
       {
         name: 'GIẢI BÓNG ĐÁ HẠNG NHẤT QUỐC GIA – BIA SAO VÀNG 2024/25',
-        tournamentId: 'vleague-2',
+        tournamentId: tournaments[1].id,
         description: 'Viết tắt: Giải bóng đá HNQG – Bia Sao Vàng 2024/25',
-        startDate: '2024-05-01T10:00:00Z',
-        endDate: '2025-04-01T10:00:00Z',
-        isActive: true,
-      },
-      {
-        name: 'GIẢI BÓNG ĐÁ CÚP QUỐC GIA 2024/25',
-        tournamentId: 'national-cup',
-        description: 'Viết tắt: Giải bóng đá Cúp QG 2024/25',
         startDate: '2024-05-01T10:00:00Z',
         endDate: '2025-04-01T10:00:00Z',
         isActive: true,
@@ -70,140 +82,144 @@ async function main() {
     ],
   });
 
-  const clubsData = Array.from({ length: 20 }).map(() => ({
-    name: fakerVI.company.name(),
-    shortName: fakerVI.company.catchPhraseAdjective(),
-    stadium: fakerVI.company.catchPhrase(),
-    stadiumDescription: fakerVI.lorem.sentence(),
-    coach: fakerVI.name.fullName(),
-    logoURL: fakerVI.image.avatar(),
-    foundedYear: fakerVI.number.int({ min: 1900, max: 2023 }),
-    createdAt: fakerVI.date.past(),
-    updatedAt: fakerVI.date.recent(),
-  }));
+  const seasons = await prisma.season.findMany();
 
-  const clubs = await prisma.club.createMany({ data: clubsData });
+  await prisma.club.createMany({ data: clubData });
+  const clubs = await prisma.club.findMany();
 
-  let seasonClubs = Array.from({ length: 20 }).map((_, i) => {
-    if (i < 14)
-      return {
-        seasonId: 1,
-        clubId: i + 1,
-      };
-    return {
-      seasonId: 2,
-      clubId: i + 1,
-    };
+  clubs.map(async (club, index) => {
+    let players = [];
+
+    if (club.shortName === 'DATH') players = generatePlayerDataDATH(club.id);
+    else if (club.shortName === 'CAHN')
+      players = generatePlayerDataCAHN(club.id);
+    else if (club.shortName === 'HPFC')
+      players = generatePlayerDataHPFC(club.id);
+    else if (club.shortName === 'SLNA')
+      players = generatePlayerDataHPFC(club.id);
+    else players = generatePlayerData(club.id);
+
+    await prisma.player.createMany({ data: players });
   });
 
-  await prisma.seasonClub.createMany({ data: seasonClubs });
-
-  const players = Array.from({ length: 200 }).map(() => ({
-    name: fakerVI.name.fullName(),
-    imageURL: fakerVI.image.avatarGitHub(),
-    nationality: fakerVI.address.country(),
-    dateOfBirth: fakerVI.date.between({ from: '1985-01-01', to: '2005-12-31' }),
-    height: fakerVI.number.int({ min: 160, max: 200 }),
-    weight: fakerVI.number.int({ min: 50, max: 100 }),
-    position: fakerVI.helpers.arrayElement([
-      'GOALKEEPER',
-      'DEFENDER',
-      'MIDFIELDER',
-      'FORWARD',
-    ]),
-    clubId: fakerVI.helpers.arrayElement([
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-    ]),
-    shirtNumber: fakerVI.number.int({ min: 1, max: 99 }),
-    createdAt: fakerVI.date.past(),
-    updatedAt: fakerVI.date.recent(),
-  }));
-
-  await prisma.player.createMany({ data: players });
+  clubs.map(async (club) => {
+    await prisma.seasonClub.create({
+      data: {
+        seasonId: seasons[0].id,
+        clubId: club.id,
+      },
+    });
+  });
 
   const matches = [];
-  for (let i = 1; i <= 14; i++) {
-    for (let j = i + 1; j <= 14; j++) {
+  const clubsCount = clubs.length;
+  clubs.map((homeClub) => {
+    clubs.map(async (awayClub) => {
       const now = fakerVI.date.recent();
-      const homeMatchDate = fakerVI.date.between({
+      const matchDate = fakerVI.date.between({
         from: '2024-05-01',
         to: '2025-05-01',
       });
       const homeMatchStatus =
-        (homeMatchDate < now && 'COMPLETED') ||
-        (homeMatchDate === now && 'ONGOING') ||
-        (homeMatchDate > now && 'SCHEDULED');
-      const homeMatch = {
-        homeClubId: i,
-        awayClubId: j,
-        stadium: fakerVI.company.name().split(' ')[1] + ' Stadium',
-        homeScore:
-          homeMatchStatus === 'COMPLETED'
-            ? fakerVI.number.int({ min: 0, max: 5 })
-            : 0,
-        awayScore:
-          homeMatchStatus === 'COMPLETED'
-            ? fakerVI.number.int({ min: 0, max: 5 })
-            : 0,
-        status: homeMatchStatus,
-        date: homeMatchDate,
-        time: fakerVI.date.soon().toISOString().slice(11, 16),
-        seasonId: 1,
-        referee: fakerVI.person.fullName(),
-        createdAt: fakerVI.date.past(),
-        updatedAt: fakerVI.date.recent(),
-      };
-      const awayMatchDate = fakerVI.date.between({
-        from: '2024-05-01',
-        to: '2025-05-01',
-      });
-      const awayMatchStatus =
-        (awayMatchDate < now && 'COMPLETED') ||
-        (awayMatchDate === now && 'ONGOING') ||
-        (awayMatchDate > now && 'SCHEDULED');
-      const awayMatch = {
-        homeClubId: j,
-        awayClubId: i,
-        stadium: fakerVI.company.name().split(' ')[1] + ' Stadium',
-        homeScore:
-          awayMatchStatus === 'COMPLETED'
-            ? fakerVI.number.int({ min: 0, max: 5 })
-            : 0,
-        awayScore:
-          awayMatchStatus === 'COMPLETED'
-            ? fakerVI.number.int({ min: 0, max: 5 })
-            : 0,
-        status: awayMatchStatus,
-        date: awayMatchDate,
-        time: fakerVI.date.soon().toISOString().slice(11, 16),
-        seasonId: 1,
-        referee: fakerVI.person.fullName(),
-        createdAt: fakerVI.date.past(),
-        updatedAt: fakerVI.date.recent(),
-      };
-      matches.push(homeMatch);
-      matches.push(awayMatch);
-    }
-  }
+        (matchDate < now && 'COMPLETED') ||
+        (matchDate === now && 'ONGOING') ||
+        (matchDate > now && 'SCHEDULED');
 
+      const matchData = {
+        homeClubId: homeClub.id,
+        awayClubId: awayClub.id,
+        stadium: homeClub.stadium,
+        homeScore: 0,
+        awayScore: 0,
+        status: homeMatchStatus,
+        date: matchDate,
+        time: fakerVI.date.soon().toISOString().slice(11, 16),
+        seasonId: seasons[0].id,
+        referee: fakerVI.person.fullName(),
+        createdAt: fakerVI.date.past(),
+        updatedAt: fakerVI.date.recent(),
+      };
+
+      matches.push(matchData);
+    });
+  });
   await prisma.match.createMany({ data: matches });
 
-  const newsData = Array.from({ length: 90 }).map(() => ({
-    title: fakerVI.lorem.sentence(6),
-    content: fakerVI.lorem.paragraphs(10),
-    thumbnail: fakerVI.image.avatar(),
-    tag: fakerVI.helpers.arrayElement([
-      'Sports',
-      'Technology',
-      'Entertainment',
-      'Politics',
-      'Health',
-    ]),
-    status: fakerVI.helpers.arrayElement(['Draft', 'Published', 'Archived']),
-    publishedAt: fakerVI.date.between({ from: '2023-01-01', to: '2024-12-31' }),
-    createdAt: fakerVI.date.past(),
-    updatedAt: fakerVI.date.recent(),
-  }));
+  const matchesData = await prisma.match.findMany({
+    include: {
+      homeClub: {
+        include: {
+          players: true,
+        },
+      },
+      awayClub: {
+        include: {
+          players: true,
+        },
+      },
+    },
+  });
+
+  matchesData.map(async (match) => {
+    if (match.status === 'COMPLETED') {
+      const events = [];
+      const eventsCount = fakerVI.number.int({ min: 10, max: 30 });
+      for (let i = 0; i < eventsCount; i++) {
+        const event = {
+          matchId: match.id,
+          eventTime: fakerVI.number.int({ min: 1, max: 90 }),
+          clubId: i % 2 === 0 ? match.homeClubId : match.awayClubId,
+          playerId: fakerVI.helpers.arrayElement(
+            i % 2 === 0
+              ? match.homeClub.players.map((player) => player.id)
+              : match.awayClub.players.map((player) => player.id),
+          ),
+          eventType: fakerVI.helpers.arrayElement([
+            'GOAL',
+            'YELLOW_CARD',
+            'RED_CARD',
+            'SUBSTITUTION',
+            'YELLOW_CARD',
+            'RED_CARD',
+            'SHOTS',
+            'SHOTS_ON_TARGET',
+            'BIG_CHANCES_CREATED',
+            'KEY_PASSES',
+            'SUCCESSFUL_DRIBBLES',
+            'SAVE',
+          ]),
+
+          createdAt: fakerVI.date.past(),
+          updatedAt: fakerVI.date.recent(),
+        };
+
+        event['comment'] = generateComment(event.eventType);
+
+        const matchData = await prisma.match.findUnique({
+          where: { id: match.id },
+        });
+
+        if (event.eventType === 'GOAL') {
+          event['assistId'] = fakerVI.helpers.arrayElement(
+            i % 2 === 0
+              ? match.homeClub.players.map((player) => player.id)
+              : match.awayClub.players.map((player) => player.id),
+          );
+
+          await prisma.match.update({
+            where: { id: matchData.id },
+            data: {
+              homeScore: matchData.homeScore + (i % 2 === 0 ? 1 : 0),
+              awayScore: matchData.awayScore + (i % 2 === 1 ? 0 : 1),
+            },
+          });
+        }
+        events.push(event);
+      }
+
+      await prisma.event.createMany({ data: events });
+    }
+  });
 
   await prisma.news.createMany({ data: newsData });
 }

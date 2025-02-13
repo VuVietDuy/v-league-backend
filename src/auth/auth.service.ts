@@ -29,11 +29,9 @@ export class AuthService {
 
   async signup(signupDto: SignupDto) {
     signupDto.role = 'USER';
-    signupDto.dateOfBirth = new Date('2002-03-25');
+    signupDto.dateOfBirth = new Date(signupDto.dateOfBirth);
     const user = await this.prisma.user.create({
-      data: {
-        ...signupDto,
-      },
+      data: signupDto,
     });
     const payload = { userId: user.id };
     return {
