@@ -12,25 +12,25 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ClubsService } from './clubs.service';
-import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { CreateClubDto } from './dto/create-club.dto';
 import { UpdateClubDto } from './dto/update-club.dto';
 
-@Controller('api/v1/clubs')
+@Controller('api/v1/')
 export class ClubsController {
   constructor(
     private clubsService: ClubsService,
     private cloudinaryService: CloudinaryService,
   ) {}
 
-  @Get()
+  @Get('clubs')
   findAll(@Query('key') key: string) {
     return this.clubsService.findAll(key);
   }
 
-  @Get(':id')
+  @Get('clubs/:id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const data = await this.clubsService.findOne(id);
     return {
@@ -40,7 +40,7 @@ export class ClubsController {
     };
   }
 
-  @Get(':clubId/players')
+  @Get('clubs/:clubId/players')
   async findPlayerByClubId(@Param('clubId', ParseIntPipe) clubId: number) {
     const data = await this.clubsService.findOne(+clubId);
     return {
@@ -50,7 +50,7 @@ export class ClubsController {
     };
   }
 
-  @Get(':clubId/matches')
+  @Get('clubs/:clubId/matches')
   async findMatchesByClubId(@Param('clubId', ParseIntPipe) clubId: number) {
     const data = await this.clubsService.findMatchesByClubId(+clubId);
     return {
@@ -60,7 +60,7 @@ export class ClubsController {
     };
   }
 
-  @Patch(':id')
+  @Patch('clubs/:id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateClubDto: UpdateClubDto,
@@ -73,7 +73,7 @@ export class ClubsController {
     };
   }
 
-  @Post()
+  @Post('clubs')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -154,7 +154,7 @@ export class ClubsController {
     };
   }
 
-  @Delete(':id')
+  @Delete('clubs/:id')
   async delete(@Param('id', ParseIntPipe) id: number) {
     const data = await this.clubsService.delete(id);
     return {
@@ -162,5 +162,28 @@ export class ClubsController {
       data: data,
       message: 'Xóa câu lạc bộ thành công',
     };
+  }
+
+  @Get('tournaments/:tournamentId/clubs:clubId/stats')
+  @ApiQuery({
+    name: 'seasonId',
+    required: false,
+    type: Number,
+    description:
+      'Lọc theo mùa giải, mặc định không truyền hoặc truyền là allSeason sẽ lấy được của thống kế tất cả mùa giải',
+  })
+  getClubStats(
+    @Param('clubId', ParseIntPipe) clubId: number,
+    @Param('tournamentId') tournamentId: string,
+    @Query('seasonId') seasonId?: string,
+  ) {
+    const seasonWhere =
+      !seasonId || seasonId === 'allSeason'
+        ? {}
+        : {
+            seasonId: +seasonId,
+          };
+    const data = this.clubsService.getClubStats(clubId, seasonWhere);
+    return data;
   }
 }

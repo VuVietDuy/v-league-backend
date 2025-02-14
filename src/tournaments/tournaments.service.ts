@@ -32,15 +32,23 @@ export class TournamentsService {
     });
   }
 
-  getMatches(tournamentId: string, where: any = null) {
+  getMatches(tournamentId: string, where: any = null, seasonId: number = null) {
+    let season = {};
+    if (seasonId) {
+      season = {
+        id: seasonId,
+      };
+    } else {
+      season = {
+        tournamentId: tournamentId,
+        isActive: true,
+      };
+    }
     return this.prisma.match.findMany({
       where: {
         AND: [
           {
-            season: {
-              tournamentId: tournamentId,
-              isActive: true,
-            },
+            season: season,
           },
           ...where,
         ],
@@ -132,6 +140,7 @@ export class TournamentsService {
           where: {
             season: {
               tournamentId: tournamentId,
+              isActive: true,
             },
           },
         },
@@ -139,11 +148,13 @@ export class TournamentsService {
           where: {
             season: {
               tournamentId: tournamentId,
+              isActive: true,
             },
           },
         },
       },
     });
+    console.log(clubs);
 
     let tables = [];
 
@@ -217,5 +228,13 @@ export class TournamentsService {
     }));
 
     return tables;
+  }
+
+  getSeasons(tournamentId: string) {
+    this.prisma.season.findMany({
+      where: {
+        tournamentId: tournamentId,
+      },
+    });
   }
 }

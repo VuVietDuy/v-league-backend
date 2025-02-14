@@ -17,7 +17,12 @@ export class SeasonsService {
   }
 
   findOne(where?: any) {
-    return this.prisma.season.findFirst({ where });
+    return this.prisma.season.findFirst({
+      where: {
+        tournamentId: where.tournamentId,
+        isActive: true,
+      },
+    });
   }
 
   findById(id: number) {

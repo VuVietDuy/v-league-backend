@@ -1,4 +1,5 @@
 import { fakerVI } from '@faker-js/faker';
+import { generatePlayerData } from './playerData';
 
 export const clubData = [
   {
@@ -227,6 +228,174 @@ export const clubData = [
     stadiumDescription: ' (Sức chứa: 15.000 người)',
     coach: 'Văn Sỹ Sơn',
     logoURL: 'https://vpf.vn/wp-content/uploads/2018/10/Quang-Nam.jpg',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Bà Rịa Vũng Tàu',
+    bio: `<div>
+        <p></p><p>CLB Bà Rịa Vũng Tàu là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại, Bà Rịa Vũng Tàu xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB Bà Rịa Vũng Tàu đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB Bà Rịa Vũng Tàu thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'BRVT',
+    stadium: 'SVĐ Bà Rịa',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Việt Thắng',
+    logoURL: 'https://vpf.vn/wp-content/uploads/2019/12/Ba-Ria-Vung-Tau.png',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Đồng Nai',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'DNFC',
+    stadium: 'SVĐ Đồng Nai',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Việt Thắng',
+    logoURL: 'https://vpf.vn/wp-content/uploads/2018/12/Dong-Nai-2023.png',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Đồng Tháp',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'DTFC',
+    stadium: 'SVĐ Đồng Tháp',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Minh Phương',
+    logoURL: 'https://vpf.vn/wp-content/uploads/2018/10/dong-thap-2023.png',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Hoà Bình',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'BRVT',
+    stadium: 'SVĐ Hoà Bình',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Minh Phương',
+    logoURL: 'https://vpf.vn/wp-content/uploads/2023/02/hoa-binh.png',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Huế',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'HFC',
+    stadium: 'SVĐ Tự Do',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Minh Phương',
+    logoURL: 'https://vpf.vn/wp-content/uploads/2018/10/Hue.jpg',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Khatoco Khánh Hòa',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'KHFC',
+    stadium: 'SVĐ Khánh Hòa',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Minh Phương',
+    logoURL:
+      'https://vpf.vn/wp-content/uploads/2018/10/logo-clb-Khatoco-Khanh-Hoa.png',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Long An',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'LAFC',
+    stadium: 'SVĐ Long An',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Minh Phương',
+    logoURL: 'https://vpf.vn/wp-content/uploads/2019/12/Ba-Ria-Vung-Tau.png',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Phù Đổng Ninh Bình',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'PDNB',
+    stadium: 'SVĐ Phù Đổng Ninh Bình',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Việt Thắng',
+    logoURL:
+      'https://vpf.vn/wp-content/uploads/2019/01/Phu-Dong-Ninh-Binh_new.jpg',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'PVF-CAND',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'PVFC',
+    stadium: 'SVĐ PVF-CAND',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Việt Thắng',
+    logoURL: 'https://vpf.vn/wp-content/uploads/2019/01/PVF-CAND.png',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Trường Tươi Bình Phước',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'TTBP',
+    stadium: 'SVĐ Trường Tươi Bình Phước',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Việt Thắng',
+    logoURL:
+      'https://vpf.vn/wp-content/uploads/2018/10/LOGO-TRuong-Tuoi-Binh-Phuoc_update.png',
+    foundedYear: 2001,
+    createdAt: fakerVI.date.past(),
+    updatedAt: fakerVI.date.recent(),
+  },
+  {
+    name: 'Trẻ TP.Hồ Chí Minh',
+    bio: `<div>
+        <p></p><p>CLB  là đội bóng đá chuyên nghiệp đang thi đấu tại hệ thống các Giải Bóng đá chuyên nghiệp Quốc Gia. Sau nhiều mùa giải gắn tên đội bóng với các nhà tài trợ, từ mùa giải 2017, chính thức mang tên CLB Quảng Nam. Thành tích cao nhất đội bóng đạt được là chức Vô địch V.League 2017, tham dự Siêu cúp Quốc gia năm 2017, đội bóng lần đầu tiên trong lịch sử giành Siêu Cúp QG 2017.&nbsp;&nbsp;<br>
+        Năm 2020, sau một mùa giải thất bại,  xuống thi đấu tại giải Hạng Nhất Quốc gia 2021. Đến năm 2023, CLB  đã vô địch giải HNQG,    thăng hạng lên V.League 1-2023/24. Do sân Tam Kỳ đang hoàn thiện cơ sở vật chất, một số vòng đầu tiên của mùa giải 2024/25, CLB  thạm dự  LPBank V.League 1-2024/25 với sân nhà là sân Hòa Xuân (Đà Nẵng).</p><p></p>
+        </div>`,
+    shortName: 'THCM',
+    stadium: 'SVĐ Thống Nhất ',
+    stadiumDescription: ' (Sức chứa: 15.000 người)',
+    coach: 'Nguyễn Việt Thắng',
+    logoURL: 'https://vpf.vn/wp-content/uploads/2024/09/T-HCM-FC.png',
     foundedYear: 2001,
     createdAt: fakerVI.date.past(),
     updatedAt: fakerVI.date.recent(),

@@ -14,6 +14,7 @@ import {
   generatePlayerDataTXND,
 } from './playerData';
 import { newsData } from './newsData';
+import { seasonData } from './seasonData';
 
 const prisma = new PrismaClient();
 
@@ -35,7 +36,7 @@ function generateComment(eventType: string): string {
 }
 
 async function main() {
-  const admin = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { email: 'admin@vleague.com' },
     update: {},
     create: {
@@ -68,24 +69,7 @@ async function main() {
   const tournaments = await prisma.tournament.findMany();
 
   await prisma.season.createMany({
-    data: [
-      {
-        name: 'GIẢI BÓNG ĐÁ VÔ ĐỊCH QUỐC GIA LPBANK 2024/25',
-        tournamentId: tournaments[0].id,
-        description: 'Viết tắt: Giải bóng đá VĐQG LPBANK 2024/25',
-        startDate: '2024-05-01T10:00:00Z',
-        endDate: '2025-04-01T10:00:00Z',
-        isActive: true,
-      },
-      {
-        name: 'GIẢI BÓNG ĐÁ HẠNG NHẤT QUỐC GIA – BIA SAO VÀNG 2024/25',
-        tournamentId: tournaments[1].id,
-        description: 'Viết tắt: Giải bóng đá HNQG – Bia Sao Vàng 2024/25',
-        startDate: '2024-05-01T10:00:00Z',
-        endDate: '2025-04-01T10:00:00Z',
-        isActive: true,
-      },
-    ],
+    data: seasonData,
   });
 
   const seasons = await prisma.season.findMany();
@@ -118,49 +102,77 @@ async function main() {
     await prisma.player.createMany({ data: players });
   });
 
-  clubs.map(async (club) => {
-    await prisma.seasonClub.create({
-      data: {
-        seasonId: seasons[0].id,
-        clubId: club.id,
+  seasons.map(async (season) => {
+    clubs.map(async (club, index) => {
+      if (season.tournamentId === 'vleague-1') {
+        if (index < 14) {
+          await prisma.seasonClub.create({
+            data: {
+              seasonId: season.id,
+              clubId: club.id,
+            },
+          });
+        }
+      } else {
+        if (index >= 14) {
+          await prisma.seasonClub.create({
+            data: {
+              seasonId: season.id,
+              clubId: club.id,
+            },
+          });
+        }
+      }
+    });
+  });
+
+  for (const season of seasons) {
+    const clubsInSeason = await prisma.club.findMany({
+      where: {
+        seasonClubs: { some: { seasonId: season.id } },
       },
     });
-  });
 
-  const matches = [];
-  const clubsCount = clubs.length;
-  clubs.map((homeClub) => {
-    clubs.map(async (awayClub) => {
-      if (homeClub.id === awayClub.id) return;
-      const now = fakerVI.date.recent();
-      const matchDate = fakerVI.date.between({
-        from: '2024-05-01',
-        to: '2025-05-01',
-      });
-      const homeMatchStatus =
-        (matchDate < now && 'COMPLETED') ||
-        (matchDate === now && 'ONGOING') ||
-        (matchDate > now && 'SCHEDULED');
+    const matches = [];
 
-      const matchData = {
-        homeClubId: homeClub.id,
-        awayClubId: awayClub.id,
-        stadium: homeClub.stadium,
-        homeScore: 0,
-        awayScore: 0,
-        status: homeMatchStatus,
-        date: matchDate,
-        time: fakerVI.date.soon().toISOString().slice(11, 16),
-        seasonId: seasons[0].id,
-        referee: fakerVI.person.fullName(),
-        createdAt: fakerVI.date.past(),
-        updatedAt: fakerVI.date.recent(),
-      };
+    for (const homeClub of clubsInSeason) {
+      for (const awayClub of clubsInSeason) {
+        if (homeClub.id === awayClub.id) continue;
 
-      matches.push(matchData);
-    });
-  });
-  await prisma.match.createMany({ data: matches });
+        const now = fakerVI.date.recent();
+        const matchDate = fakerVI.date.between({
+          from: season.startDate,
+          to: season.endDate,
+        });
+
+        const homeMatchStatus =
+          (matchDate < now && 'COMPLETED') ||
+          (matchDate === now && 'ONGOING') ||
+          (matchDate > now && 'SCHEDULED');
+
+        const matchData = {
+          homeClubId: homeClub.id,
+          awayClubId: awayClub.id,
+          stadium: homeClub.stadium,
+          homeScore: 0,
+          awayScore: 0,
+          status: homeMatchStatus,
+          date: matchDate,
+          time: fakerVI.date.soon().toISOString().slice(11, 16),
+          seasonId: season.id,
+          referee: fakerVI.person.fullName(),
+          createdAt: fakerVI.date.past(),
+          updatedAt: fakerVI.date.recent(),
+        };
+
+        matches.push(matchData);
+      }
+    }
+
+    if (matches.length > 0) {
+      await prisma.match.createMany({ data: matches });
+    }
+  }
 
   const matchesData = await prisma.match.findMany({
     include: {
@@ -181,6 +193,8 @@ async function main() {
     if (match.status === 'COMPLETED') {
       const events = [];
       const eventsCount = fakerVI.number.int({ min: 10, max: 30 });
+      let homeScore = 0;
+      let awayScore = 0;
       for (let i = 0; i < eventsCount; i++) {
         const event = {
           matchId: match.id,
@@ -192,6 +206,7 @@ async function main() {
               : match.awayClub.players.map((player) => player.id),
           ),
           eventType: fakerVI.helpers.arrayElement([
+            'GOAL',
             'GOAL',
             'YELLOW_CARD',
             'RED_CARD',
@@ -205,16 +220,11 @@ async function main() {
             'SUCCESSFUL_DRIBBLES',
             'SAVE',
           ]),
-
           createdAt: fakerVI.date.past(),
           updatedAt: fakerVI.date.recent(),
         };
 
         event['comment'] = generateComment(event.eventType);
-
-        const matchData = await prisma.match.findUnique({
-          where: { id: match.id },
-        });
 
         if (event.eventType === 'GOAL') {
           event['assistId'] = fakerVI.helpers.arrayElement(
@@ -223,16 +233,18 @@ async function main() {
               : match.awayClub.players.map((player) => player.id),
           );
 
-          await prisma.match.update({
-            where: { id: matchData.id },
-            data: {
-              homeScore: matchData.homeScore + (i % 2 === 0 ? 1 : 0),
-              awayScore: matchData.awayScore + (i % 2 === 1 ? 0 : 1),
-            },
-          });
+          if (i % 2 === 0) homeScore++;
+          else awayScore++;
         }
         events.push(event);
       }
+      await prisma.match.update({
+        where: { id: match.id },
+        data: {
+          homeScore: homeScore,
+          awayScore: awayScore,
+        },
+      });
 
       await prisma.event.createMany({ data: events });
     }

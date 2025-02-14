@@ -10,7 +10,6 @@ import { UsersModule } from './users/users.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
 import { SeasonsModule } from './seasons/seasons.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import { TablesModule } from './tables/tables.module';
 
 @Module({
   imports: [
@@ -24,7 +23,6 @@ import { TablesModule } from './tables/tables.module';
     TournamentsModule,
     SeasonsModule,
     CloudinaryModule,
-    TablesModule,
   ],
 })
 export class AppModule {}
