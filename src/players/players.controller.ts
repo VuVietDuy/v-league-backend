@@ -84,4 +84,11 @@ export class PlayersController {
   delete(@Param('id') id: string) {
     return this.playersService.delete(+id);
   }
+
+  @Get(':clubId/stats')
+  async getPlayerStats(@Param('clubId') clubId: number) {
+    const data = await this.playersService.getPlayerStats(+clubId);
+
+    return data;
+  }
 }

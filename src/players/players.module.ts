@@ -8,5 +8,6 @@ import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
   providers: [PlayersService],
   controllers: [PlayersController],
   imports: [PrismaModule, CloudinaryModule],
+  exports: [PlayersService],
 })
 export class PlayersModule {}

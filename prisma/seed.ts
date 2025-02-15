@@ -15,6 +15,7 @@ import {
 } from './playerData';
 import { newsData } from './newsData';
 import { seasonData } from './seasonData';
+import { matchImagesData } from './matchImagesData';
 
 const prisma = new PrismaClient();
 
@@ -48,6 +49,25 @@ async function main() {
       role: 'ADMIN',
     },
   });
+
+  const usersData = [];
+
+  for (let i = 0; i < 10; i++) {
+    usersData.push({
+      name: fakerVI.person.fullName(),
+      email: fakerVI.internet.email(),
+      password: fakerVI.internet.password(),
+      gender: fakerVI.helpers.arrayElement(['MALE', 'FEMALE']),
+      dateOfBirth: fakerVI.date.birthdate({ min: 18, max: 50, mode: 'age' }),
+      role: fakerVI.helpers.arrayElement(['USER', 'ADMIN']),
+      createdAt: fakerVI.date.past(),
+      updatedAt: fakerVI.date.recent(),
+    });
+  }
+
+  await prisma.user.createMany({ data: usersData });
+
+  const users = await prisma.user.findMany();
 
   await prisma.tournament.createMany({
     data: [
@@ -191,28 +211,28 @@ async function main() {
 
   matchesData.map(async (match) => {
     if (match.status === 'COMPLETED') {
+      // Seed data event
       const events = [];
       const eventsCount = fakerVI.number.int({ min: 10, max: 30 });
       let homeScore = 0;
       let awayScore = 0;
       for (let i = 0; i < eventsCount; i++) {
+        const playerId = fakerVI.helpers.arrayElement(
+          i % 2 === 0
+            ? match.homeClub.players.map((player) => player.id)
+            : match.awayClub.players.map((player) => player.id),
+        );
         const event = {
           matchId: match.id,
           eventTime: fakerVI.number.int({ min: 1, max: 90 }),
           clubId: i % 2 === 0 ? match.homeClubId : match.awayClubId,
-          playerId: fakerVI.helpers.arrayElement(
-            i % 2 === 0
-              ? match.homeClub.players.map((player) => player.id)
-              : match.awayClub.players.map((player) => player.id),
-          ),
+          playerId: playerId,
           eventType: fakerVI.helpers.arrayElement([
             'GOAL',
             'GOAL',
             'YELLOW_CARD',
             'RED_CARD',
             'SUBSTITUTION',
-            'YELLOW_CARD',
-            'RED_CARD',
             'SHOTS',
             'SHOTS_ON_TARGET',
             'BIG_CHANCES_CREATED',
@@ -223,21 +243,69 @@ async function main() {
           createdAt: fakerVI.date.past(),
           updatedAt: fakerVI.date.recent(),
         };
+        const voteData = [];
 
         event['comment'] = generateComment(event.eventType);
 
         if (event.eventType === 'GOAL') {
-          event['assistId'] = fakerVI.helpers.arrayElement(
+          const assistId = fakerVI.helpers.arrayElement(
             i % 2 === 0
               ? match.homeClub.players.map((player) => player.id)
               : match.awayClub.players.map((player) => player.id),
           );
+          event['assistId'] = assistId;
+
+          // Seed data vote
+          let voteCount = fakerVI.number.int({ min: 100, max: 200 });
+          for (let j = 0; j <= voteCount; j++) {
+            voteData.push({
+              userId: fakerVI.helpers.arrayElement(
+                users.map((user) => user.id),
+              ),
+              playerId: playerId,
+              matchId: match.id,
+            });
+          }
+          voteCount = fakerVI.number.int({ min: 90, max: 180 });
+          for (let j = 0; j <= voteCount; j++) {
+            voteData.push({
+              userId: fakerVI.helpers.arrayElement(
+                users.map((user) => user.id),
+              ),
+              playerId: assistId,
+              matchId: match.id,
+            });
+          }
 
           if (i % 2 === 0) homeScore++;
           else awayScore++;
         }
+        // Seed data vote
+        if (
+          [
+            'SHOTS',
+            'SHOTS_ON_TARGET',
+            'BIG_CHANCES_CREATED',
+            'KEY_PASSES',
+            'SUCCESSFUL_DRIBBLES',
+            'SAVE',
+          ].includes(event.eventType)
+        ) {
+          let voteCount = fakerVI.number.int({ min: 50, max: 100 });
+          for (let j = 0; j <= voteCount; j++) {
+            voteData.push({
+              userId: fakerVI.helpers.arrayElement(
+                users.map((user) => user.id),
+              ),
+              playerId: playerId,
+              matchId: match.id,
+            });
+          }
+        }
+        await prisma.vote.createMany({ data: voteData });
         events.push(event);
       }
+
       await prisma.match.update({
         where: { id: match.id },
         data: {
@@ -247,6 +315,34 @@ async function main() {
       });
 
       await prisma.event.createMany({ data: events });
+
+      const matchLineups = [];
+      for (let i = 0; i <= 11; i++) {
+        matchLineups.push({
+          matchId: match.id,
+          playerId: match.homeClub.players[i].id,
+          clubId: match.homeClubId,
+          isStarting: true,
+        });
+        matchLineups.push({
+          matchId: match.id,
+          playerId: match.awayClub.players[i].id,
+          clubId: match.awayClubId,
+          isStarting: true,
+        });
+      }
+
+      await prisma.lineup.createMany({ data: matchLineups });
+
+      const matchImages = [];
+      for (let i = 0; i <= 11; i++) {
+        matchImages.push({
+          matchId: match.id,
+          imageURL: fakerVI.helpers.arrayElement(matchImagesData),
+        });
+      }
+
+      await prisma.matchImage.createMany({ data: matchImages });
     }
   });
 

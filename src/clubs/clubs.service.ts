@@ -3,10 +3,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClubDto } from './dto/create-club.dto';
 import { UpdateClubDto } from './dto/update-club.dto';
 import { contains } from 'class-validator';
+import { PlayersService } from 'src/players/players.service';
 
 @Injectable()
 export class ClubsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private playersService: PlayersService,
+  ) {}
 
   create(createClubDto: CreateClubDto) {
     return this.prisma.club.create({ data: createClubDto });
@@ -30,13 +34,22 @@ export class ClubsService {
     });
   }
 
-  findOne(id: number) {
-    return this.prisma.club.findUnique({
+  async findOne(id: number) {
+    let club = await this.prisma.club.findUnique({
       where: { id },
-      include: {
-        players: true,
+    });
+    const players = await this.prisma.player.findMany({
+      where: {
+        clubId: club.id,
       },
     });
+    club['players'] = [];
+    for (const player of players) {
+      const playerData = await this.playersService.getPlayerStats(player.id);
+      club['players'].push(playerData);
+    }
+
+    return club;
   }
 
   update(id: number, updateClubDto: UpdateClubDto) {
@@ -148,17 +161,41 @@ export class ClubsService {
       matchesPlayed++;
       goals += match.awayScore;
       goalsConceded += match.homeScore;
-      if (match.homeScore < match.awayScore) {
+      if (match.awayScore > match.homeScore) {
         wins++;
-      } else if (match.homeScore > match.awayScore) {
+      } else if (match.awayScore < match.homeScore) {
         losses++;
       }
       if (match.homeScore === 0) {
         cleanSheets++;
       }
-      shots += match.events.filter(
-        (event) => event.eventType === 'SHOTS' && event.clubId === club.id,
-      ).length;
+      match.events.forEach((event) => {
+        if (event.clubId !== club.id) return;
+
+        if (event.eventType === 'SHOTS') {
+          shots++;
+        }
+
+        if (event.eventType === 'SHOTS_ON_TARGET') {
+          shotsOnTarget++;
+        }
+
+        if (event.eventType === 'KEY_PASSES') {
+          keyPass++;
+        }
+
+        if (event.eventType === 'SAVE') {
+          saves++;
+        }
+
+        if (event.eventType === 'YELLOW_CARD') {
+          yellowCard++;
+        }
+
+        if (event.eventType === 'RED_CARD') {
+          redCard++;
+        }
+      });
     });
 
     const data = {
@@ -198,6 +235,7 @@ export class ClubsService {
         goalsConcededPermatch:
           Math.round((goalsConceded / matchesPlayed) * 100) / 100,
         ownGoals: 0,
+        saves: saves,
       },
       discipline: {
         yellowCard: yellowCard,

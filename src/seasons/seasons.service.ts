@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateSeasonDto } from './dto/create-season.dto';
-import { contains } from 'class-validator';
 
 @Injectable()
 export class SeasonsService {
   constructor(private prisma: PrismaService) {}
 
   create(createSeasonDto: CreateSeasonDto) {
-    console.log(createSeasonDto);
     return this.prisma.season.create({ data: createSeasonDto });
   }
 

@@ -143,6 +143,10 @@ export class TournamentsService {
               isActive: true,
             },
           },
+          include: {
+            homeClub: true,
+            awayClub: true,
+          },
         },
         awayMatches: {
           where: {
@@ -151,10 +155,13 @@ export class TournamentsService {
               isActive: true,
             },
           },
+          include: {
+            homeClub: true,
+            awayClub: true,
+          },
         },
       },
     });
-    console.log(clubs);
 
     let tables = [];
 
@@ -196,6 +203,10 @@ export class TournamentsService {
         }
       });
       let points = won * 3 + drawn;
+      let form = [...club.homeMatches, ...club.awayMatches];
+      form = form
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .slice(0, 5);
 
       const tablesItem = {
         club: {
@@ -216,6 +227,7 @@ export class TournamentsService {
         goalsAgainst,
         goalDifference: goalsFor - goalsAgainst,
         points,
+        form,
       };
       tables.push(tablesItem);
     });

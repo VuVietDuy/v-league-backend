@@ -119,7 +119,6 @@ export class SeasonsController {
     @Query('seasonId') seasonId: string,
     @Query('key') key: string,
   ) {
-    console.log(seasonId);
     let where =
       seasonId === 'current' || !seasonId
         ? {
@@ -129,9 +128,7 @@ export class SeasonsController {
         : {
             seasonId: +seasonId,
           };
-    console.log(where);
     const currentSeason = await this.seasonsService.findOne(where);
-    console.log(currentSeason);
 
     const clubs = await this.seasonsService.getSeasonClubs(
       currentSeason.id,
