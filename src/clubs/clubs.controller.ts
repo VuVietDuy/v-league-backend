@@ -164,7 +164,7 @@ export class ClubsController {
     };
   }
 
-  @Get('tournaments/:tournamentId/clubs:clubId/stats')
+  @Get('tournaments/:tournamentId/clubs/:clubId/stats')
   @ApiQuery({
     name: 'seasonId',
     required: false,

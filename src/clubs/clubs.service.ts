@@ -101,6 +101,7 @@ export class ClubsService {
     let saves = 0;
     let yellowCard = 0;
     let redCard = 0;
+    let keyPass = 0;
 
     club.homeMatches.forEach((match) => {
       matchesPlayed++;
@@ -126,7 +127,7 @@ export class ClubsService {
         }
 
         if (event.eventType === 'KEY_PASSES') {
-          shotsOnTarget++;
+          keyPass++;
         }
 
         if (event.eventType === 'SAVE') {
@@ -180,6 +181,9 @@ export class ClubsService {
         goalsPerMatch: Math.round((goals / matchesPlayed) * 100) / 100,
         shots: shots,
         bigChancesCreated: 21,
+        shotsOnTarget: shotsOnTarget,
+        shootingAccuracy: Math.round((shotsOnTarget / shots) * 100),
+        keyPass: keyPass,
       },
       teamPlay: {
         passes: matchesPlayed * 1.5,
