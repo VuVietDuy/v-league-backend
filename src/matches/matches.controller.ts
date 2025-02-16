@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   UploadedFile,
   UseInterceptors,
@@ -19,6 +20,7 @@ import { CreateVoteDto } from './dto/create-vote.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { MatchImageDto } from './dto/match-image.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Controller('api/v1/')
 export class MatchesController {
@@ -107,6 +109,19 @@ export class MatchesController {
   @Delete('events/:eventId')
   deleteEvent(@Param('eventId') eventId: number) {
     return this.matchsService.deleteEvent(+eventId);
+  }
+
+  @Get('events/:eventId')
+  getDetailEvent(@Param('eventId') eventId: number) {
+    return this.matchsService.getDetailEvent(+eventId);
+  }
+
+  @Put('events/:eventId')
+  updateEvent(
+    @Param('eventId') eventId: number,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    return this.matchsService.updateEvent(+eventId, updateEventDto);
   }
 
   @Get('matches/:matchId/events')

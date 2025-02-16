@@ -6,6 +6,7 @@ import { CreateLineupsDto } from './dto/create-lineups.dto';
 import { EventType } from '@prisma/client';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { MatchImageDto } from './dto/match-image.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class MatchesService {
@@ -531,6 +532,28 @@ export class MatchesService {
       where: {
         id: eventId,
       },
+    });
+  }
+
+  getDetailEvent(eventId: number) {
+    return this.prisma.event.findUnique({
+      where: {
+        id: eventId,
+      },
+      include: {
+        club: true,
+        player: true,
+        assist: true,
+      },
+    });
+  }
+
+  updateEvent(eventId: number, updateEventDto: UpdateEventDto) {
+    return this.prisma.event.update({
+      where: {
+        id: eventId,
+      },
+      data: updateEventDto,
     });
   }
 }
