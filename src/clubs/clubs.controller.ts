@@ -143,6 +143,10 @@ export class ClubsController {
     const fileUploaded = await this.cloudinaryService.uploadFile(logo);
 
     createClubDto.foundedYear = parseInt(createClubDto.foundedYear as any, 10);
+    createClubDto.stadiumCapacity = parseInt(
+      createClubDto.stadiumCapacity as any,
+      10,
+    );
     createClubDto.logoURL = fileUploaded.url;
 
     const data = await this.clubsService.create(createClubDto);

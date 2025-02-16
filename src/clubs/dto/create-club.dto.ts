@@ -21,4 +21,13 @@ export class CreateClubDto {
 
   @ApiProperty()
   foundedYear: number;
+
+  @ApiProperty()
+  stadiumCapacity: number;
+
+  @ApiProperty()
+  stadiumAddress: string;
+
+  @ApiProperty()
+  stadiumMap: string;
 }
