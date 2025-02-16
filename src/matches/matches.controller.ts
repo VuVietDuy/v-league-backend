@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -44,6 +45,11 @@ export class MatchesController {
   @Get('matches/:matchId/lineups')
   getMatchLineups(@Param('matchId') matchId: number) {
     return this.matchsService.getMatchLineups(+matchId);
+  }
+
+  @Get('matches/:matchId/stats')
+  getMatchStats(@Param('matchId') matchId: number) {
+    return this.matchsService.getMatchStats(+matchId);
   }
 
   @Post('matches/:matchId/lineups')
@@ -96,6 +102,11 @@ export class MatchesController {
       data: data,
       message: 'Thêm sự kiện thành công',
     };
+  }
+
+  @Delete('events/:eventId')
+  deleteEvent(@Param('eventId') eventId: number) {
+    return this.matchsService.deleteEvent(+eventId);
   }
 
   @Get('matches/:matchId/events')

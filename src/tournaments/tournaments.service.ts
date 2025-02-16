@@ -123,25 +123,31 @@ export class TournamentsService {
     });
   }
 
-  async getTables(tournamentId: string) {
+  async getTables(tournamentId: string, seasonId: number = null) {
+    let season = {};
+    if (seasonId) {
+      season = {
+        id: seasonId,
+      };
+    } else {
+      season = {
+        tournamentId: tournamentId,
+        isActive: true,
+      };
+    }
+    console.log(season);
     const clubs = await this.prisma.club.findMany({
       where: {
         seasonClubs: {
           some: {
-            season: {
-              tournamentId: tournamentId,
-              isActive: true,
-            },
+            season: season,
           },
         },
       },
       include: {
         homeMatches: {
           where: {
-            season: {
-              tournamentId: tournamentId,
-              isActive: true,
-            },
+            season: season,
           },
           include: {
             homeClub: true,
@@ -150,10 +156,7 @@ export class TournamentsService {
         },
         awayMatches: {
           where: {
-            season: {
-              tournamentId: tournamentId,
-              isActive: true,
-            },
+            season: season,
           },
           include: {
             homeClub: true,

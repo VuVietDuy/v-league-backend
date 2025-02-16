@@ -449,4 +449,88 @@ export class MatchesService {
       },
     });
   }
+
+  async getMatchStats(matchId: number) {
+    const match = await this.prisma.match.findUnique({
+      where: {
+        id: matchId,
+      },
+      include: {
+        homeClub: true,
+        awayClub: true,
+        events: true,
+      },
+    });
+
+    const data = {
+      homeClub: {
+        ...match.homeClub,
+        possession: 57.7,
+        shotsOnTargett: match.events.filter(
+          (event) =>
+            event.eventType === 'SHOTS_ON_TARGET' &&
+            event.clubId === match.homeClubId,
+        ).length,
+        shots: match.events.filter(
+          (event) =>
+            event.eventType === 'SHOTS' && event.clubId === match.homeClubId,
+        ).length,
+        touches: 723,
+        passes: 363,
+        corners: 34,
+        yellowCards: match.events.filter(
+          (event) =>
+            event.eventType === 'YELLOW_CARD' &&
+            event.clubId === match.homeClubId,
+        ).length,
+        redCards: match.events.filter(
+          (event) =>
+            event.eventType === 'RED_CARD' && event.clubId === match.homeClubId,
+        ).length,
+        foulsConceded: match.events.filter(
+          (event) =>
+            event.eventType === 'OWN_GOAL' && event.clubId === match.homeClubId,
+        ).length,
+      },
+      awayClub: {
+        ...match.awayClub,
+        possession: 57.7,
+        shots: match.events.filter(
+          (event) =>
+            event.eventType === 'SHOTS' && event.clubId === match.awayClubId,
+        ).length,
+        shotsOnTargett: match.events.filter(
+          (event) =>
+            event.eventType === 'SHOTS_ON_TARGET' &&
+            event.clubId === match.awayClubId,
+        ).length,
+        touches: 723,
+        passes: 363,
+        corners: 34,
+        yellowCards: match.events.filter(
+          (event) =>
+            event.eventType === 'YELLOW_CARD' &&
+            event.clubId === match.awayClubId,
+        ).length,
+        redCards: match.events.filter(
+          (event) =>
+            event.eventType === 'RED_CARD' && event.clubId === match.awayClubId,
+        ).length,
+        foulsConceded: match.events.filter(
+          (event) =>
+            event.eventType === 'OWN_GOAL' && event.clubId === match.awayClubId,
+        ).length,
+      },
+    };
+
+    return data;
+  }
+
+  deleteEvent(eventId: number) {
+    return this.prisma.event.delete({
+      where: {
+        id: eventId,
+      },
+    });
+  }
 }

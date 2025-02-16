@@ -95,8 +95,11 @@ export class TournamentsController {
   }
 
   @Get(':tournamentId/tables')
-  getTables(@Param('tournamentId') tournamentId: string) {
-    return this.tournamentsService.getTables(tournamentId);
+  getTables(
+    @Param('tournamentId') tournamentId: string,
+    @Query('seasonId') seasonId: number,
+  ) {
+    return this.tournamentsService.getTables(tournamentId, +seasonId);
   }
 
   @Get(':tournamentId/clubs')

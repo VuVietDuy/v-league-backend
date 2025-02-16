@@ -1,4 +1,14 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreatePlayerDto } from './create-player.dto';
+import { Position } from '@prisma/client';
 
-export class UpdatePlayerDto extends PartialType(CreatePlayerDto) {}
+export class UpdatePlayerDto {
+  name?: string;
+  image?: Express.Multer.File;
+  imageURL?: string;
+  nationality?: string;
+  dateOfBirth?: string;
+  height?: number;
+  weight?: number;
+  position?: Position;
+  clubId?: number;
+  shirtNumber?: number;
+}

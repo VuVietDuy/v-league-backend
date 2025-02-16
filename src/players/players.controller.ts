@@ -75,9 +75,14 @@ export class PlayersController {
   }
 
   @Put(':id')
-  @ApiConsumes('multipart/form-data')
-  update(@Param('id') id: string, @Body() updatePlayerDto: UpdatePlayerDto) {
-    return this.playersService.update(+id, updatePlayerDto);
+  async update(
+    @Param('id') id: number,
+    @Body() updatePlayerDto: UpdatePlayerDto,
+  ) {
+    console.log(id);
+    console.log(updatePlayerDto);
+    const data = await this.playersService.update(+id, updatePlayerDto);
+    return data;
   }
 
   @Delete(':id')
