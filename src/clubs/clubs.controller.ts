@@ -99,10 +99,27 @@ export class ClubsController {
           description: 'Sân vận động',
           default: 'Mỹ Đình',
         },
+        stadiumDescription: {
+          type: 'string',
+          description: 'Sân vận động',
+          default: 'Mỹ Đình',
+        },
         logo: {
           type: 'string',
           format: 'binary',
           description: 'Logo câu lạc bộ',
+        },
+        stadiumAddress: {
+          type: 'string',
+          description: '',
+        },
+        stadiumMap: {
+          type: 'string',
+          description: '',
+        },
+        stadiumCapacity: {
+          type: 'integer',
+          description: '',
         },
       },
     },
@@ -143,6 +160,10 @@ export class ClubsController {
     const fileUploaded = await this.cloudinaryService.uploadFile(logo);
 
     createClubDto.foundedYear = parseInt(createClubDto.foundedYear as any, 10);
+    createClubDto.stadiumCapacity = parseInt(
+      createClubDto.stadiumCapacity as any,
+      10,
+    );
     createClubDto.logoURL = fileUploaded.url;
 
     const data = await this.clubsService.create(createClubDto);

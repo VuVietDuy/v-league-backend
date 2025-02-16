@@ -103,7 +103,6 @@ model Club {
   stadiumAddress String?
   stadiumMap String?
   stadiumCapacity Int?
-  stadiumImage Int?
   seasonClubs SeasonClub[]
   events      Event[]
   followers   User[]
