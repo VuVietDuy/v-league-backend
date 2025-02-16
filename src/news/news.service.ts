@@ -22,11 +22,21 @@ export class NewsService {
     if (key) {
       where = {
         ...where,
-        title: {
-          contains: key,
-        },
+        OR: [
+          {
+            title: {
+              contains: key,
+            },
+          },
+          {
+            content: {
+              contains: key,
+            },
+          },
+        ],
       };
     }
+
     return this.prisma.news.findMany({
       where: where,
       orderBy: {
