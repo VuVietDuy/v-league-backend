@@ -81,8 +81,6 @@ export class PlayersController {
     @Param('id') id: number,
     @Body() updatePlayerDto: UpdatePlayerDto,
   ) {
-    console.log(id);
-    console.log(updatePlayerDto);
     const data = await this.playersService.update(+id, updatePlayerDto);
     return data;
   }

@@ -14,6 +14,7 @@ import { NewsService } from './news.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { UpdateNewsDto } from './dto/update-news.dto';
 
 @Controller('api/v1/news')
 export class NewsController {
@@ -55,8 +56,8 @@ export class NewsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string) {
-    return this.newsService.delete(+id);
+  update(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
+    return this.newsService.update(+id, updateNewsDto);
   }
 
   @Delete(':id')
