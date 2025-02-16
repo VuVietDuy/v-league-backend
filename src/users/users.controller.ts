@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -14,6 +15,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Role } from '@prisma/client';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('api/v1/users')
 export class UsersController {
@@ -30,8 +32,20 @@ export class UsersController {
     };
   }
 
+  @Get(':userId')
+  getProfile(@Param('userId') userId: number) {
+    return this.usersService.getProfile(+userId);
+  }
+
+  @Put(':userId')
+  updateProfile(
+    @Param('userId') userId: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.updateProfile(+userId, updateUserDto);
+  }
+
   @Get()
-  // @UseGuards(AuthGuard)
   findAll(
     @Request() req: any,
     @Query('key') key: string,
