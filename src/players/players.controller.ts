@@ -65,6 +65,11 @@ export class PlayersController {
     };
   }
 
+  @Get('feature')
+  getFeaturePlayers() {
+    return this.playersService.getFeaturePlayers();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const data = await this.playersService.findOne(+id);

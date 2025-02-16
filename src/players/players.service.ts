@@ -170,4 +170,26 @@ export class PlayersService {
     };
     return data;
   }
+
+  async getFeaturePlayers() {
+    const players = await this.prisma.player.findMany({
+      take: 5,
+      include: {
+        _count: {
+          select: { votes: true },
+        },
+      },
+      orderBy: {
+        votes: { _count: 'desc' },
+      },
+    });
+    const featurePlayers = [];
+
+    for (const player of players) {
+      const playerStats = await this.getPlayerStats(player.id);
+      featurePlayers.push(playerStats);
+    }
+
+    return featurePlayers;
+  }
 }

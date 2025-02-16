@@ -135,7 +135,6 @@ export class TournamentsService {
         isActive: true,
       };
     }
-    console.log(season);
     const clubs = await this.prisma.club.findMany({
       where: {
         seasonClubs: {
