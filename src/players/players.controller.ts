@@ -41,6 +41,8 @@ export class PlayersController {
     }
 
     createPlayerDto.height = +createPlayerDto.height;
+    createPlayerDto.weight = +createPlayerDto.weight;
+    createPlayerDto.shirtNumber = +createPlayerDto.shirtNumber;
     createPlayerDto.clubId = +createPlayerDto.clubId;
 
     const data = await this.playersService.create(createPlayerDto);
